@@ -19,6 +19,23 @@ Gharpayy handles inquiries from various sources like WhatsApp, Website, Social M
 ## 🏗️ System Architecture
 The system follows a clean **MERN stack** architecture with specific focus on **automation** and **visibility**.
 
+### 🔄 Lead Lifecycle Workflow
+```mermaid
+graph TD
+    A[Lead Inquiry] -->|WhatsApp/Web/Social| B(Lead Capture)
+    B --> C{Auto Assignment}
+    C -->|Round Robin| D[Assigned Agent]
+    D --> E[New Lead]
+    E --> F[Contacted]
+    F --> G[Requirement Collected]
+    G --> H[Visit Scheduled]
+    H --> I[Visit Completed]
+    I --> J{Outcome}
+    J -->|Success| K[Booked]
+    J -->|Dropped| L[Lost]
+```
+
+
 ### 1. Lead Capture & Automation
 Leads from website forms, WhatsApp, and social media are captured via a central POST endpoint. Upon submission:
 - A unique **Lead Profile** is created.
@@ -42,6 +59,36 @@ Visualized progress tracking through 8 key stages:
 
 ## 📊 Database Design
 The schema is built for **traceability** and **scalability**.
+
+### 🏗️ Entity Relationship Diagram
+```mermaid
+erDiagram
+    AGENT ||--o{ LEAD : "assigned_to"
+    LEAD ||--o{ VISIT : "has"
+    LEAD ||--o{ TIMELINE : "tracks"
+    
+    AGENT {
+        string name
+        string email
+        int leadCount
+        date lastAssigned
+    }
+    LEAD {
+        string name
+        string phone
+        string status
+        string source
+        json propertyInterest
+        date lastInteraction
+    }
+    VISIT {
+        string propertyTitle
+        date dateTime
+        string outcome
+        string notes
+    }
+```
+
 
 - **Lead**: Stores identity, source, status, assignment, and a rich `timeline` of interactions.
 - **Agent**: Tracks availability, status, and assignment history.
